@@ -12,11 +12,8 @@ const Home = ()=> {
     const [cookies, setCookie] = useCookies(['name','email']);
 
     const addUserNameToCookie = ()=>{
-        console.log("this is the username!!!")
-        console.log(userName)
         setCookie('name', userName, { path: '/' });
         setCookie('email', email, { path: '/' });
-        console.log(cookies.name)
     }
 
     const getUserName = ()=>{

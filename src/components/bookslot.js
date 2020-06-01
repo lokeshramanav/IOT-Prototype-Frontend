@@ -34,25 +34,19 @@ const BookSlot = ()=>{
     React.useEffect(() => {init();}, []);
 
     const handleMallChange = (data)=>{
-        console.log("This is the mall!!!")
-        console.log(data)
         setMall(data)
     }
     const handlebookingDate = (date)=>{
-        console.log(date)
         setBookingDate(date)
     }
 
     const handlebookingTime = (time)=>{
-        console.log(time)
         setBookingTime(time)
     }
 
     const printDetails = (e)=>{
         e.preventDefault();
         getSlots(bookingDate.toISOString().slice(0,10), bookingTime.format("HH:mm"), mall, cookies.name ).then(data=>{
-            console.log("this is the response for slots")
-            console.log(data)
             setBookingMessage({...bookingMessage,message:data.message,showMessage:true})
         })
     }

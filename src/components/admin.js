@@ -77,8 +77,6 @@ const Admin = ()=>{
 
     const submitAddMall = (e)=>{
         e.preventDefault();
-        console.log(addMall.mallName)
-        console.log(addMall.mallLocation)
         postMall(addMall.mallName, addMall.mallLocation).then(data=>{
             console.log(data)
         })
@@ -129,8 +127,6 @@ const Admin = ()=>{
 
     const submitAddLotForm = (e)=>{
         e.preventDefault();
-        console.log(addLot.mallid)
-        console.log(addLot.lotName)
         postLot(addLot.mallid,addLot.lotName).then(data=>console.log(data)).catch(err=>console.log(err))
     }
 
@@ -187,8 +183,6 @@ const Admin = ()=>{
     }
     //Get lots as per the selection of the mall
     const handleChangeMall = (data)=>{
-        console.log("this is the mall id")
-        console.log(data)
         getLots(data).then((data)=> {console.log(data);setLots(data.lots)})
     }
 
@@ -198,8 +192,6 @@ const Admin = ()=>{
 
     const submitAddSlotForm=(e)=>{
         e.preventDefault();
-        console.log(addSlot.lotId)
-        console.log(addSlot.slotNumber)
         postSlot(addSlot.lotId,addSlot.slotNumber).then((data)=> {console.log(data)})
     }
 
@@ -250,11 +242,6 @@ const Admin = ()=>{
     );
 
 }
-
-
-
-
-
 
 
 export default Admin;
