@@ -137,3 +137,7 @@
   text-decoration: none;
 }
 
+#startDate, #startTime {
+  width: 25%;
+  float: left;
+}
