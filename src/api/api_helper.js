@@ -15,7 +15,7 @@ export const getMalls = ()=>{
 
 export const getSlots = (startDate, startTime , mallName, userName )=>{
 
-    return fetch (`${API}/slot/getSlots`, {
+    return fetch (`${API}/lot/getParkingLot`, {
         method: "POST",
         headers:{
             "Content-Type": "application/json"

@@ -6,25 +6,19 @@ import {postMall , getMalls, postLot, getLots, postSlot, deleteBookings} from '.
 const Admin = ()=>{
 
     const[malls,setMalls] = React.useState([])
-    const[lots,setLots] = React.useState([])
-
     const[addMall, setAddMall] = React.useState({
         showAddMall: false,
+        showListMall:false,
         mallName: "",
-        mallLocation:""
+        mallLocation:"",
+        listMalls:[]
     })
-
     const[addLot, setAddLot] = React.useState({
         showAddLot: false,
         mallid: "",
         lotName:""
     })
 
-    const[addSlot, setAddSlot] = React.useState({
-        showAddSlot: false,
-        lotId:"",
-        slotNumber:""
-    })
 
     const[deleteDb, setDeleteDb] = React.useState({
         showDleteDb: false
@@ -35,6 +29,7 @@ const Admin = ()=>{
             if (data.error) {
                 setMalls([]);
             } else {
+                console.log("this is the init functions!!!")
                 setMalls(data.malls);
             }
         });
@@ -49,7 +44,6 @@ const Admin = ()=>{
         e.preventDefault();
         setAddMall({...addMall, showAddMall:true})
         setAddLot({...addLot, showAddLot:false})
-        setAddSlot({...addSlot, showAddSlot:false})
         setDeleteDb({...deleteDb, showDleteDb:false})
     }
 
@@ -67,8 +61,33 @@ const Admin = ()=>{
         <button className="btn-block"  onClick={e=>submitAddMall(e)}style={{color: "rgba(0,0,0,0.61)",fontFamily: "Alfa Slab One, cursive",fontSize: "16px"}}><b>ADD MALL</b></button>
         </div>
         </form>
+        {listMall()}
         </div>);
 
+    }
+
+    const listMall=()=>{
+
+
+        return(<div>
+        <form style={{marginTop:"10px" , paddingTop:"10px"}}>
+        <table style={{width:"100%"}}>
+        <thead>
+            <tr>
+              <th>MALL NAME</th>
+              <th>MALL LOCATION</th>
+            </tr>
+            </thead>
+            <tbody>
+            {
+                malls.map((c, i) => (<tr key={i}>
+                    <td>{c.mall_name}</td>
+                    <td>{c.mall_location}</td></tr>
+                ))}
+                </tbody>
+        </table>
+        </form>
+        </div>);
     }
 
     const handleAddMallFormChange = (name) => event=> {
@@ -80,16 +99,26 @@ const Admin = ()=>{
         postMall(addMall.mallName, addMall.mallLocation).then(data=>{
             console.log(data)
         })
+        getMalls().then(data => {
+            if (data.error) {
+                setAddMall({...addMall, listMalls:[]});
+            } else {
+                setMalls(data.malls);
+                setAddMall({...addMall, listMalls:data.malls , showListMall:true});
+            }
+        });
+
+        //setAddMall({...addMall, showListMall:true})
     }
 
       // ADD LOT FORM RELATED COMPONENTS
 
     const showAddLotForm = (e)=>{
         e.preventDefault();
-        setAddMall({...addMall, showAddMall:false})
+        setAddMall({...addMall, showAddMall:false, showListMall:false})
         setAddLot({...addLot, showAddLot:true})
-        setAddSlot({...addSlot, showAddSlot:false})
         setDeleteDb({...deleteDb, showDleteDb:false})
+        //setAddMall({...addMall, showListMall:false});
     }
 
     const addLotForm = ()=>{
@@ -118,6 +147,7 @@ const Admin = ()=>{
         <button onClick ={e=>submitAddLotForm(e)}className="btn-block" style={{color: "rgba(0,0,0,0.61)",fontFamily: "Alfa Slab One, cursive",fontSize: "16px"}}><b>ADD LOT</b></button>
         </div>
         </form>
+        { listLot()}
         </div>);
     }
 
@@ -128,78 +158,44 @@ const Admin = ()=>{
     const submitAddLotForm = (e)=>{
         e.preventDefault();
         postLot(addLot.mallid,addLot.lotName).then(data=>console.log(data)).catch(err=>console.log(err))
+        getMalls().then(data => {
+            if (data.error) {
+                setMalls([]);
+            } else {
+                console.log("this is the init functions!!!")
+                setMalls(data.malls);
+            }
+        });
     }
 
-     // ADD SLOT FORM RELATED COMPONENTS
-
-    const showAddSlotForm = (e)=>{
-        e.preventDefault();
-        setAddMall({...addMall, showAddMall:false})
-        setAddLot({...addLot, showAddLot:false})
-        setAddSlot({...addSlot, showAddSlot:true})
-        setDeleteDb({...deleteDb, showDleteDb:false})
+    const listLot = ()=>{
+        return(<div>
+            <form style={{marginTop:"10px" , paddingTop:"10px"}}>
+            <table style={{width:"100%"}}>
+            <thead>
+                <tr>
+                  <th>MALL NAME</th>
+                  <th>PARKING LOT</th>
+                </tr>
+                </thead>
+                <tbody>
+                {
+                    malls.map((c, i) => (<tr key={i} rowspan={c.lot.length}>
+                        <td >{c.mall_name}</td>
+                        {c.lot.map((m,k)=> (<tr style={{borderStyle:"none"}}><td style={{borderStyle:"none"}}>{m.lot_name}</td></tr>))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            </form>
+            </div>);
     }
 
-    const addSlotForm = ()=>{
-        return(
-        <div>
-        <div style={{width:"25px"}}></div>
-        <form style={{marginTop:"10px" , paddingTop:"10px"}}>
-        <div className="input-group date" id="startTime">
-        <label><b>Select Mall:&nbsp;&nbsp;</b></label>
-        <select onChange={e=>handleChangeMall(e.target.value)} >
-        <option>Please select</option>
-        {malls &&
-            malls.map((c, i) => (
-                <option key={i} value={c.id}>
-                    {c.mall_name}
-                </option>
-            ))}
-        </select>
-        </div>
-        <div className="input-group date" id="startTime">
-        <label><b>Select Lot:&nbsp;&nbsp;</b></label>
-        <select onChange={handleAddSlotFormChange("lotId")} >
-        <option>Please select</option>
-        {lots && lots.map((c, i) => (
-            <option key={i} value={c.id}>
-                {c.lot_name}
-            </option>
-        ))
-
-        }
-        </select>
-        </div>
-        <div style={{margin:"55px"}}></div>
-        <div className="input-group date">
-        <label><b>SLOT NUMBER:&nbsp;&nbsp; </b> </label>
-        <input className="form-control" onChange={handleAddSlotFormChange("slotNumber")} type="text" style={{backgroundColor: "rgb(236,249,244)",fontFamily: "Allerta, sans-serif"}}/></div>
-        <div style={{margin:"25px"}}></div>
-        <div className="input-group date" id="startTime">
-        <button className="btn-block" onClick={e=>submitAddSlotForm(e)} style={{color: "rgba(0,0,0,0.61)",fontFamily: "Alfa Slab One, cursive",fontSize: "16px"}}><b>ADD SLOT</b></button>
-        </div>
-        </form>
-        </div>);
-    }
-    //Get lots as per the selection of the mall
-    const handleChangeMall = (data)=>{
-        getLots(data).then((data)=> {console.log(data);setLots(data.lots)})
-    }
-
-    const handleAddSlotFormChange = (name) => event=> {
-        setAddSlot({ ...addSlot, [name]: event.target.value});
-    };
-
-    const submitAddSlotForm=(e)=>{
-        e.preventDefault();
-        postSlot(addSlot.lotId,addSlot.slotNumber).then((data)=> {console.log(data)})
-    }
-
+    // View and delete booking history
     const showDeleteTab = (e)=>{
         e.preventDefault();
         setAddMall({...addMall, showAddMall:false})
         setAddLot({...addLot, showAddLot:false})
-        setAddSlot({...addSlot, showAddSlot:false})
         setDeleteDb({...deleteDb, showDleteDb:true})
         deleteBookings().then(data=>console.log(data)).catch(err=>console.log(err))
     }
@@ -222,16 +218,12 @@ const Admin = ()=>{
                 <button className="btn-block" onClick={e=>showAddLotForm(e)} style={{color: "rgba(0,0,0,0.61)",fontFamily: "Alfa Slab One, cursive",fontSize: "16px"}}>ADD LOT</button>
                 </div>
                 <div className="input-group date" id="startTime">
-                <button className="btn-block" onClick={e=>showAddSlotForm(e)} style={{color: "rgba(0,0,0,0.61)",fontFamily: "Alfa Slab One, cursive",fontSize: "16px"}}>ADD SLOT</button>
-                </div>
-                <div className="input-group date" id="startTime">
                 <button className="btn-block" onClick={e=>showDeleteTab(e)} style={{color: "rgba(0,0,0,0.61)",fontFamily: "Alfa Slab One, cursive",fontSize: "16px"}}>CLEAR DB</button>
                 </div>
                 </form>
                 {/* Add mall form */}
                 {addMall.showAddMall && addMallForm() }
                 {addLot.showAddLot && addLotForm() }
-                {addSlot.showAddSlot && addSlotForm() }
                 {deleteDb.showDleteDb && deleteDbTab() }
                 </div>);
     }
